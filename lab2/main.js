@@ -1,6 +1,7 @@
 function init() {
     var scene = new THREE.Scene();
     var enableFog = false;
+    var gui = new dat.GUI();
 
     if (enableFog) {
         scene.fog = new THREE.FogExp2(0xffffff, 0.2);
@@ -22,6 +23,8 @@ function init() {
     pointLight.add(sphere);
     scene.add(pointLight);
 
+    gui.add(pointLight, 'intensity', 0, 10);
+    gui.add(pointLight.position, 'y', 0, 5);
 
     var camera = new THREE.PerspectiveCamera(
         50,
@@ -37,7 +40,10 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor('rgb(120, 120, 120)')
     document.getElementById("webgl").appendChild(renderer.domElement);
-    update(renderer, scene, camera);
+
+    var controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+    update(renderer, scene, camera, controls);
 }
 
 function getBox(width, height, depth) {
@@ -47,6 +53,9 @@ function getBox(width, height, depth) {
         color: 'rgb(120, 120, 120)'
     });
     var mesh = new THREE.Mesh(geometry, material);
+
+    mesh.castShadow = true;
+
     return mesh;
 }
 
@@ -58,20 +67,27 @@ function getPlane(size) {
         side: THREE.DoubleSide
     });
     var mesh = new THREE.Mesh(geometry, material);
+
+    mesh.receiveShadow = true;
+
     return mesh;
 }
 
 function getPointLight(intensity) {
-
     var light = new THREE.PointLight(0xffffff, intensity);
+    
+    light.castShadow = true;
+
     return light;
 }
 
-function update(renderer, scene, camera) {
+function update(renderer, scene, camera, controls) {
     renderer.render(scene, camera);
 
+    controls.update();
+
     requestAnimationFrame(function () {
-        update(renderer, scene, camera);
+        update(renderer, scene, camera, controls);
     });
 }
 
