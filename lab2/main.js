@@ -11,6 +11,7 @@ function init() {
     var plane = getPlane(20);
     var pointLight = getPointLight(1);
     var sphere = getSphere(0.05);
+    var boxGrid = getBoxGrid(10, 1.5);
 
     plane.name = 'plane-1';
 
@@ -18,10 +19,11 @@ function init() {
     plane.rotation.x = Math.PI / 2;
     pointLight.position.y = 2;
 
-    scene.add(box);
+ 
     scene.add(plane);
     pointLight.add(sphere);
     scene.add(pointLight);
+    scene.add(boxGrid);
 
     gui.add(pointLight, 'intensity', 0, 10);
     gui.add(pointLight.position, 'y', 0, 5);
@@ -99,6 +101,30 @@ function getSphere(size){
     var mesh = new THREE.Mesh(
         geometry, material);
     return mesh;
+}
+
+function getBoxGrid(amount, seperationMultiplier){
+    var group = new THREE.Group();
+
+    for (var i = 0; i < amount; i++){
+        var obj = getBox(1, 1, 1);
+        obj.position.x = i * seperationMultiplier;
+        obj.position.y = obj.geometry.parameters.height / 2;
+        group.add(obj);
+        for (var j = 0; j < amount; j++){
+            var obj = getBox(1, 1, 1);
+            obj.position.x = i * seperationMultiplier;
+            obj.position.y = obj.geometry.parameters.height / 2;
+            obj.position.z = j * seperationMultiplier;
+            group.add(obj);
+        }
+    }
+
+    group.position.x = -(seperationMultiplier * (amount - 1)) / 2;
+    group.position.z = -(seperationMultiplier * (amount - 1)) / 2;
+
+    return group;
+
 }
 
 init();
