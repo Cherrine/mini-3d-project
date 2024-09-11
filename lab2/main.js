@@ -29,9 +29,7 @@ function init() {
         1,
         1000
     );
-    camera.position.x = 1;
-    camera.position.y = 2;
-    camera.position.z = 5;
+    camera.position.set(1, 2, 5);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 
